@@ -1,23 +1,27 @@
 import {Router} from 'express'
 import { Todo } from '../models/todo'
+import { type } from 'os'
 const router = Router()
-
+type RequestBody = {text : string}
+type RequestParms = {id : string}
 const todo:Todo[] = []
 router.get('/',(req,res,next)=>{
     res.status(200).json({todo:todo})
 })
 
 router.post('/todo',(req,res,next)=>{
+    const body = req.body as RequestBody
     const newTodo:Todo = {
         id:new Date().toString(),
-        text: req.body.text
+        text: body.text
     }
     todo.push(newTodo)
     res.status(201).json({message:'Added Todo',tod:newTodo, todo:todo})
 })
 
 router.delete('/delete/:id',(req,res,next)=>{
-    const id = req.params.id
+    const params = req.params as RequestParms
+    const id = params.id
     if(todo){
     // todo[id].remove()
     const filter = todo.filter((item)=>item.id !==id)
@@ -29,10 +33,12 @@ router.delete('/delete/:id',(req,res,next)=>{
 })
 
 router.put('/edit/:id',(req,res,)=>{
-    const id = req.params.id
+    const params = req.params as RequestParms
+    const id = params.id
+    const body = req.body as RequestBody
     const todoIndex = todo.findIndex((index)=> index.id = id)
     if(todoIndex >=0 ){
-        todo[todoIndex] = {id:todo[todoIndex].id,text:req.body.text}
+        todo[todoIndex] = {id:todo[todoIndex].id,text:body.text}
      return res.status(200).json({message:'Updated todo',todo:todo})
     }
    
